@@ -27,7 +27,7 @@ class Maze:
     # read the input as PNG extension:
     def read_input(self, file):
         self.filename = file.replace(".png", "")
-        self.image = Image.open(os.path.join(sys.path[0], "inputs", file))
+        self.image = Image.open(os.path.join(sys.path[0], "samples", file))
         self.image = self.image.convert(mode="RGB")
         pixels = list(self.image.getdata())
         width, height = self.image.size
@@ -36,8 +36,8 @@ class Maze:
             [self.close_to(pixle) for pixle in row] for row in pixels]
         return (self.filename, self.image.size)
 
-    # write the output as PNG and GIF extensions
-    def write_output(self, solution, gif=0):
+    # write the output as PNG
+    def write_output(self, solution):
         red = (255, 0, 0)
         green = (0, 255, 0)
         blue = (0, 10, 255)
@@ -49,26 +49,15 @@ class Maze:
         goal = self.cordinates["goal"]
         pixels[initial[1], initial[0]] = red
         pixels[goal[1], goal[0]] = green
-        if(gif):
-            frames = []
-            for position in visited[1:]:
-                if(position != initial and position != goal):
-                    pixels[position[1], position[0]] = cyan
-                    temp = self.image.copy()
-                    frames.append(temp)
-            for position in path:
-                pixels[position[1], position[0]] = blue
-                temp = self.image.copy()
-                frames.append(temp)
-            frames[0].save('outputs/{}.gif'.format(self.filename),
-                           append_images=frames[1:], save_all=True, duration=20, loop=0)
-        else:
-            for position in visited[1:]:
-                if(position != initial and position != goal):
-                    pixels[position[1], position[0]] = cyan
-            for position in path:
-                pixels[position[1], position[0]] = blue
-        self.image.save("outputs/{}.png".format(self.filename))
+
+        for position in visited[1:]:
+            if(position != initial and position != goal):
+                pixels[position[1], position[0]] = cyan
+        for position in path:
+            pixels[position[1], position[0]] = blue
+            
+        self.image.save(os.path.join(
+            sys.path[0], "samples", '{}_result.png'.format(self.filename)))
 
     # helper function: check the new position if it is valid for the movement function
     def check_position(self, state, new_position):
@@ -259,13 +248,12 @@ class Maze:
         return None
 
     # Main Function to run the program
-
     def main(self):
         while(True):
             print("Write the file name:")
-            print(os.listdir(os.path.join(sys.path[0], "inputs")))
+            print("Avaliable files: {}".format(os.listdir(os.path.join(sys.path[0], "samples"))))
             filename = input()
-            if(filename not in os.listdir(os.path.join(sys.path[0], "inputs"))):
+            if(filename not in os.listdir(os.path.join(sys.path[0], "samples"))):
                 print("The file is not exist.")
                 continue
             reader = self.read_input(filename)
@@ -338,12 +326,7 @@ class Maze:
 
             print(round((end_time - start_time), 5), "Seconds")
 
-            print("Do you want to extract a gif solution? (y/n)")
-            gif = input()
-            if(gif == "y"):
-                self.write_output(solution, gif=1)
-            else:
-                self.write_output(solution)
+            self.write_output(solution)
 
             print("Count of expanded nodes: ", self.expanded_nodes)
             print("Path cost: ", self.path_cost)
