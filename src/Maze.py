@@ -25,7 +25,7 @@ class Maze:
         return "0" if(sum(pixle) > 390) else "1"
 
     # read the input as PNG extension:
-    def read_input(self, file):
+    def read_input(self, file) -> tuple:
         self.filename = file.replace(".png", "")
         self.image = Image.open(os.path.join(sys.path[0], "samples", file))
         self.image = self.image.convert(mode="RGB")
@@ -37,7 +37,7 @@ class Maze:
         return (self.filename, self.image.size)
 
     # write the output as PNG
-    def write_output(self, solution):
+    def write_output(self, solution) -> None:
         red = (255, 0, 0)
         green = (0, 255, 0)
         blue = (0, 10, 255)
@@ -55,19 +55,19 @@ class Maze:
                 pixels[position[1], position[0]] = cyan
         for position in path:
             pixels[position[1], position[0]] = blue
-            
+
         self.image.save(os.path.join(
             sys.path[0], "samples", '{}_result.png'.format(self.filename)))
 
     # helper function: check the new position if it is valid for the movement function
-    def check_position(self, state, new_position):
+    def check_position(self, state, new_position) -> bool:
         x, y = new_position[0], new_position[1]
         if(state[x][y] == '1'):
-            return None
-        return new_position
+            return False
+        return True
 
     # movements: to find all the possible moves
-    def movements(self, position):
+    def movements(self, position) -> list:
         state = self.initial_state
         new_states = []
         max_x, max_y = len(state), len(state[0])
@@ -125,7 +125,7 @@ class Maze:
         return path
 
     # Estimated cost for Greedy and A*
-    def estimated_cost(self, position):
+    def estimated_cost(self, position) -> float:
         if(self.type == 1):
             goal = self.cordinates["goal"]
             estimated_cost = abs(
@@ -139,7 +139,7 @@ class Maze:
             return estimated_cost
 
     # Bredth first search (BFS)
-    def BFS(self):
+    def BFS(self) -> tuple:
         BFS_tree = Tree(self.cordinates["initial"], False)
         frontier = Queue()
         frontier.enqueue(BFS_tree.root)
@@ -165,7 +165,7 @@ class Maze:
         return None
 
     # Depth first search (DFS):
-    def DFS(self):
+    def DFS(self) -> tuple:
         DFS_tree = Tree(self.cordinates["initial"], False)
         frontier = Stack()
         frontier.push(DFS_tree.root)
@@ -191,7 +191,7 @@ class Maze:
         return None
 
     # Greedy Best-first search:
-    def Greedy(self):
+    def Greedy(self) -> tuple:
         Greedy_tree = Tree(self.cordinates["initial"], False)
         frontier = PriorityQueue()
         frontier.enqueue(Greedy_tree.root)
@@ -219,7 +219,7 @@ class Maze:
         return None
 
     # A*:
-    def A(self):
+    def A(self) -> tuple:
         A_tree = Tree(self.cordinates["initial"], False)
         frontier = PriorityQueue()
         frontier.enqueue(A_tree.root)
@@ -251,7 +251,8 @@ class Maze:
     def main(self):
         while(True):
             print("Write the file name:")
-            print("Avaliable files: {}".format(os.listdir(os.path.join(sys.path[0], "samples"))))
+            print("Avaliable files: {}".format(
+                os.listdir(os.path.join(sys.path[0], "samples"))))
             filename = input()
             if(filename not in os.listdir(os.path.join(sys.path[0], "samples"))):
                 print("The file is not exist.")
