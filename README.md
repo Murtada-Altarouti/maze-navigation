@@ -26,7 +26,7 @@ In order to run this project, you must have [Python3](https://www.python.org/) i
 pip3 install -r requirments.txt
 ```
 
-## Running the solver
+## Running instructions
 In order to run the program, you must have a black and white maze image saved in samples. You can re-use the demo.png, but also feel free to use or draw one on your own. Run `Python3 Maze.py` and follow the instructions. Note that the solution will be generated in the samples folder at the end
 
 ![image](https://user-images.githubusercontent.com/63660298/171045848-b0a4ee89-b14d-46c2-8843-5d5cb7c2755c.png)
